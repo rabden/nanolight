@@ -13,11 +13,3 @@ type Ext struct{ Open bool }
 
 func (e *Ext) Height() float32                                { return 97 }
 func (e *Ext) view(c *ui.Context, p *Panel, shell ui.Element) {}
-
-// Settings is the Settings screen (settings.go).
-type Settings struct{ Open bool }
-
-func (s *Settings) init()                                          {}
-func (s *Settings) Show()                                          { s.Open = true }
-func (s *Settings) Hide()                                          { s.Open = false }
-func (s *Settings) view(c *ui.Context, p *Panel, shell ui.Element) {}

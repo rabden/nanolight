@@ -148,7 +148,7 @@ func (p *Panel) Height() float32 {
 	case p.Welcome.Active:
 		return p.Welcome.Height()
 	case p.Settings.Open:
-		return core.SettingsHeight
+		return p.Settings.Height()
 	case p.Ext.Open:
 		return p.Ext.Height()
 	case p.previewing:

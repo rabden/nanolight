@@ -56,6 +56,8 @@ type App struct {
 	icons     map[string]*ui.Bitmap
 
 	keepOpen bool
+	login    *bool // opens at login, as last read
+	trayCan  bool  // the desktop shows tray icons
 	page     pageState
 	sugg     suggester
 }
@@ -177,6 +179,7 @@ func (a *App) Show() {
 		return
 	}
 	a.welcomeShowing()
+	a.login = nil // read again: the desktop's settings may have changed it
 	a.place()
 	a.panel.Reveal()
 	a.win.Show()
