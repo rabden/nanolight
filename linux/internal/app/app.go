@@ -63,6 +63,7 @@ type App struct {
 	trayCan  bool  // the desktop shows tray icons
 	tray     *mygo.Tray
 	acct     *account.Account
+	up       updates
 	page     pageState
 	sugg     suggester
 	ext      extRunner

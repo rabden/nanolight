@@ -21,6 +21,12 @@ type prefs struct{ a *App }
 
 func (a *App) startSettings() {
 	a.panel.Settings.Hooks = prefs{a}
+	// The Zig build's autostart entry runs the old program: it becomes
+	// this one's.
+	if zigAutostart() {
+		on := true
+		prefs{a}.Login(&on)
+	}
 }
 
 // settingsChanged redraws what shows the settings (Settings, the tray).
@@ -58,8 +64,9 @@ func (s prefs) Login(set *bool) bool {
 	if set != nil {
 		if err := mygo.App.SetOpenAtLogin(*set); err != nil {
 			log.Printf("nanolight: open at login: %v", err)
+		} else {
+			removeZigAutostart()
 		}
-		removeZigAutostart()
 		a.login = nil
 	}
 	if a.login == nil {
