@@ -45,6 +45,8 @@ type SettingsHost interface {
 	SignOut()
 	Terms()
 	Version() string
+	// Updatable: Nanolight updates itself (not a package manager's copy).
+	Updatable() bool
 	// Ready is the version an update waits to restart into, or "".
 	Ready() string
 	Check()
@@ -80,6 +82,7 @@ type Settings struct {
 	login   bool
 	tray    bool
 	canTray bool
+	canUpd  bool
 	account AccountState
 	email   string
 	version string
@@ -95,6 +98,7 @@ const copiedFor = 1400 * time.Millisecond
 func (s *Settings) init() {
 	s.version = "0.1.0"
 	s.canTray = true
+	s.canUpd = true
 	s.tray = true
 }
 
@@ -122,6 +126,7 @@ func (s *Settings) pull() {
 	s.email = h.Email()
 	s.version = h.Version()
 	s.ready = h.Ready()
+	s.canUpd = h.Updatable()
 }
 
 // problemH is the room the note under the chips takes, when the shortcut
@@ -152,7 +157,10 @@ func (s *Settings) rows() []rowKind {
 	if s.account == SignedOut || s.account == Starting {
 		rows = append(rows, rowTerms)
 	}
-	return append(rows, rowUpdates, rowWelcome, rowQuit)
+	if s.canUpd {
+		rows = append(rows, rowUpdates)
+	}
+	return append(rows, rowWelcome, rowQuit)
 }
 
 func (s *Settings) selected() rowKind {
@@ -228,7 +236,9 @@ func (s *Settings) body(c *ui.Context, p *Panel, pal Palette) {
 	if s.ready != "" {
 		upd = "Restart to Update to " + s.ready
 	}
-	s.button(c, p, pal, rowUpdates, upd)
+	if s.canUpd {
+		s.button(c, p, pal, rowUpdates, upd)
+	}
 	s.button(c, p, pal, rowWelcome, "Show Welcome Again")
 	s.button(c, p, pal, rowQuit, "Quit Nanolight")
 }

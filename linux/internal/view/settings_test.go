@@ -54,6 +54,7 @@ func (f *prefs) SignOut()              { f.signOuts++ }
 func (f *prefs) Terms()                { f.terms++ }
 func (f *prefs) Version() string       { return "2.0.1" }
 func (f *prefs) Ready() string         { return f.ready }
+func (f *prefs) Updatable() bool       { return true }
 func (f *prefs) Check()                { f.checks++ }
 func (f *prefs) Restart()              { f.restarts++ }
 func (f *prefs) Welcome()              { f.welcomes++ }

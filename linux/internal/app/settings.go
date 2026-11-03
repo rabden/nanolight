@@ -126,6 +126,7 @@ func (s prefs) SignOut()                   { s.a.signOut() }
 func (s prefs) Terms()                     { s.a.OpenURL(termsURL) }
 func (s prefs) Version() string            { return Version() }
 func (s prefs) Ready() string              { return s.a.updateReady() }
+func (s prefs) Updatable() bool            { return s.a.updatesOn() }
 func (s prefs) Check()                     { s.a.checkUpdates() }
 func (s prefs) Restart()                   { s.a.restartToUpdate() }
 func (s prefs) Welcome()                   { s.a.showWelcome() }
