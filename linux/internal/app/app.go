@@ -18,6 +18,7 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 
+	"github.com/rabden/nanolight/linux/internal/account"
 	"github.com/rabden/nanolight/linux/internal/apps"
 	"github.com/rabden/nanolight/linux/internal/core"
 	"github.com/rabden/nanolight/linux/internal/hotkey"
@@ -60,6 +61,8 @@ type App struct {
 	blurAt   time.Time
 	login    *bool // opens at login, as last read
 	trayCan  bool  // the desktop shows tray icons
+	tray     *mygo.Tray
+	acct     *account.Account
 	page     pageState
 	sugg     suggester
 	ext      extRunner

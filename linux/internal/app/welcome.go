@@ -13,7 +13,26 @@ type welcomeHost struct{ a *App }
 func (a *App) startWelcome() {
 	a.panel.Welcome.Hooks = welcomeHost{a}
 	if !a.kv.Has(store.KeyOnboarded) {
+		a.firstFreeKey()
 		a.panel.Welcome.Start(a.choice)
+	}
+}
+
+// firstFreeKey: on a first run where the default key is the desktop's
+// (Alt Space: GNOME's window menu, KRunner), the first preset that's free
+// is chosen instead (decision 3). On Wayland the portal binds what it can.
+func (a *App) firstFreeKey() {
+	if Wayland() || a.hotkeyErr == nil || a.kv.Has(store.KeyHotkey) {
+		return
+	}
+	for _, c := range hotkey.All {
+		if c != a.choice && !a.keyTaken(c) {
+			a.useKey(c)
+			if a.hotkeyErr == nil {
+				a.kv.Set(store.KeyHotkey, c.Name())
+				return
+			}
+		}
 	}
 }
 
