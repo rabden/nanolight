@@ -185,7 +185,7 @@ func (s *Settings) view(c *ui.Context, p *Panel, shell ui.Element) {
 		s.head(c, pal)
 		// The rows are taller than the panel can be (as on the Mac): they
 		// scroll, the selected one kept in view.
-		ui.Scroll(c).FillWidth().Padding(2, 20, 6).Gap(10).Grow(1).Shrink(1).Children(func() {
+		ui.Scroll(c).FillWidth().Padding(2, 20, 6, 20).Gap(10).Grow(1).Shrink(1).Children(func() {
 			s.body(c, p, pal)
 		})
 		s.reveal = false
@@ -266,24 +266,7 @@ func (s *Settings) problemNote(c *ui.Context, p *Panel, pal Palette) {
 			ui.Text(c, "Add a keyboard shortcut in your desktop's settings that runs").FontSize(12).TextColor(pal.Sub).NoWrap()
 			ui.Text(c, toggleCommand).Font(Mono).FontSize(12).TextColor(pal.Text).NoWrap()
 		})
-		b := ui.Row(c.Key("copy-toggle")).Height(28).PaddingX(10).Radius(8).AlignItems(ui.Center).
-			Background(pal.Tile).Border(1, pal.Rim).Label("Copy Command").OnClick(func() {
-			if p.Host != nil {
-				p.Host.Copy(toggleCommand)
-			}
-			s.copiedAt = p.clock()
-		})
-		if b.Hovered() {
-			b.Background(pal.Sel)
-		}
-		label := "Copy Command"
-		if since := p.clock().Sub(s.copiedAt); since < copiedFor {
-			label = "Copied"
-			c.After(copiedFor - since)
-		}
-		b.Children(func() {
-			ui.Text(c, label).FontSize(12).FontWeight(W500).TextColor(pal.Text).NoWrap()
-		})
+		copyButton(c, p, pal, &s.copiedAt)
 	})
 }
 

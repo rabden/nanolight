@@ -7,9 +7,6 @@ import (
 
 // Filled in by later phases.
 
-func (a *App) startWelcome()             {}
-func (a *App) welcomeShowing()           {}
-func (a *App) welcomePressed(bool)       {}
 func (a *App) startTray()                {}
 func (a *App) startUpdates()             {}
 func (a *App) updateAway()               {}
@@ -30,4 +27,3 @@ func (a *App) signOut()                        {}
 func (a *App) updateReady() string             { return "" }
 func (a *App) checkUpdates()                   {}
 func (a *App) restartToUpdate()                {}
-func (a *App) showWelcome()                    {}

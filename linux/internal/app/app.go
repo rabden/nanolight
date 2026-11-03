@@ -56,6 +56,8 @@ type App struct {
 	icons     map[string]*ui.Bitmap
 
 	keepOpen bool
+	quitting bool
+	blurAt   time.Time
 	login    *bool // opens at login, as last read
 	trayCan  bool  // the desktop shows tray icons
 	page     pageState
@@ -105,11 +107,16 @@ func (a *App) start() {
 		Height:        int(math.Ceil(float64(a.panel.Height()))),
 		Content:       ui.View(a.panel.View),
 	})
-	// Hide rather than close: on Escape left to the panel, Alt+F4.
+	// Hide rather than close (Alt+F4), unless the app is quitting: Quit in
+	// Settings or the tray, the session ending (SIGTERM).
 	a.win.OnClose(func(e *mygo.CloseEvent) {
+		if a.quitting {
+			return
+		}
 		e.PreventDefault()
 		a.Hide()
 	})
+	mygo.App.OnBeforeQuit(func(*mygo.QuitEvent) { a.quitting = true })
 	a.win.OnBlur(a.blurred)
 	a.win.OnHide(a.hidden)
 	mygo.Theme.OnUpdated(a.win.Invalidate)
@@ -192,10 +199,15 @@ func (a *App) Show() {
 
 // Toggle hides the panel when it shows with the keyboard, else shows it.
 func (a *App) Toggle() {
+	if os.Getenv("NANOLIGHT_DEBUG") != "" {
+		log.Printf("nanolight: toggle (visible %v, focused %v)", a.win.IsVisible(), a.win.IsFocused())
+	}
 	if a.win == nil {
 		return
 	}
-	showing := a.win.IsVisible() && a.win.IsFocused()
+	// The shortcut's own key grab takes the focus for a moment (X11's
+	// NotifyGrab): a blur just now still counts as showing with the keys.
+	showing := a.win.IsVisible() && (a.win.IsFocused() || time.Since(a.blurAt) < blurGrace)
 	a.welcomePressed(showing)
 	if showing {
 		a.win.Hide()
@@ -219,11 +231,21 @@ func (a *App) Hide() {
 // blurred: another window took the keys; the panel goes, and a note
 // ("Updated to …") is done.
 func (a *App) blurred() {
-	a.panel.Note = ""
-	if a.win.IsVisible() {
-		a.win.Hide()
-	}
+	// Not at once: the shortcut's key grab blurs the panel too, and gives
+	// the focus back as the key is let go.
+	a.blurAt = time.Now()
+	time.AfterFunc(blurGrace, func() {
+		a.win.Update(func() {
+			if a.win.IsVisible() && !a.win.IsFocused() && time.Since(a.blurAt) >= blurGrace {
+				a.panel.Note = ""
+				a.win.Hide()
+			}
+		})
+	})
 }
+
+// blurGrace is how long a blur waits before the panel goes.
+const blurGrace = 150 * time.Millisecond
 
 // hidden: the page stops, and is let go after a while; updates may go in.
 func (a *App) hidden() {
