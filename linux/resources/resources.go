@@ -14,3 +14,11 @@ var Icon256 []byte
 //
 //go:embed icon.png
 var Icon []byte
+
+// RaycastHost is the Node host that runs Raycast extensions
+// (raycast/dist/host.js, copied here by go generate: Go embeds only files
+// inside the module).
+//
+//go:generate cp ../../raycast/dist/host.js raycast-host.js
+//go:embed raycast-host.js
+var RaycastHost []byte

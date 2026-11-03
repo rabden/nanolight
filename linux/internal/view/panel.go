@@ -106,6 +106,7 @@ func NewPanel(h Host, ix *apps.Index) *Panel {
 	p := &Panel{Host: h, Index: ix, SuggestOn: true, clock: time.Now, pageEnabled: true}
 	p.appIcon, _ = ui.DecodeBitmap(resources.Icon256)
 	p.Settings.init()
+	p.Ext.panel = p
 	return p
 }
 
@@ -183,7 +184,7 @@ func (p *Panel) View(c *ui.Context) {
 		case p.Settings.Open:
 			p.Settings.view(c, p, shell)
 		case p.Ext.Open:
-			p.Ext.view(c, p, shell)
+			p.Ext.screen(c, p, shell)
 		default:
 			p.search(c, shell)
 		}

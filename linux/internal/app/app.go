@@ -62,6 +62,8 @@ type App struct {
 	trayCan  bool  // the desktop shows tray icons
 	page     pageState
 	sugg     suggester
+	ext      extRunner
+	script   scriptRunner
 }
 
 var nl *App
@@ -70,6 +72,7 @@ var nl *App
 func Run() error {
 	a := &App{icons: map[string]*ui.Bitmap{}, index: &apps.Index{}}
 	nl = a
+	a.ext.a, a.script.a = a, a
 	mygo.App.SetActivationPolicy(mygo.ActivationPolicyAccessory)
 	mygo.App.OnWindowAllClosed(func() {}) // a launcher keeps running
 	mygo.App.OnSecondInstance(func(args []string, _ string) {
@@ -121,6 +124,7 @@ func (a *App) start() {
 	a.win.OnHide(a.hidden)
 	mygo.Theme.OnUpdated(a.win.Invalidate)
 	a.scan()
+	a.startRaycast()
 	a.useKey(a.choice)
 	a.startSettings()
 	a.startWelcome()

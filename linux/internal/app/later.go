@@ -1,22 +1,17 @@
 package app
 
 import (
-	"github.com/rabden/nanolight/linux/internal/apps"
 	"github.com/rabden/nanolight/linux/internal/view"
 )
 
 // Filled in by later phases.
 
-func (a *App) startTray()                {}
-func (a *App) startUpdates()             {}
-func (a *App) updateAway()               {}
-func (a *App) startAccount()             {}
-func (a *App) maybePull()                {}
-func (a *App) touched(bool)              {}
-func (a *App) raycastRows() []apps.Entry { return nil }
-func (a *App) openRaycast(apps.Entry) bool {
-	return false
-}
+func (a *App) startTray()    {}
+func (a *App) startUpdates() {}
+func (a *App) updateAway()   {}
+func (a *App) startAccount() {}
+func (a *App) maybePull()    {}
+func (a *App) touched(bool)  {}
 
 func (a *App) trayChanged()                    {}
 func (a *App) showTray(bool)                   {}
